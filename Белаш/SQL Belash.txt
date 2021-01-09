@@ -1,0 +1,124 @@
+create database zakaz4
+use zakaz4
+
+create table марка
+(
+IDM int not null identity,
+мName varchar(50) not null,
+constraint  CS_PK primary key(IDM),
+)
+alter table марка add constraint CS_Check1 check(мName = 'Фольцваген' or мName = 'Тойота' or мName = 'Форд' or мName = 'Додж' or мName = 'Фиат' or мName = 'Феррари' or мName = 'Митсубиси')
+insert into марка(мName) values ('Фольцваген')
+insert into марка(мName) values ('Тойота')
+insert into марка(мName) values ('Форд')
+insert into марка(мName) values ('Додж')
+insert into марка(мName) values ('Фиат')
+
+update марка set мName = 'Пежо' where мName = 'Фиат'
+update марка set мName = 'Порше' where мName = 'Тойота'
+
+delete from марка where мName ='Додж'
+delete from марка where мName ='Пежо'
+
+
+
+create table улица
+(
+IDY int not null identity,
+yName varchar(50) not null,
+constraint CS_PK2 primary key(IDY)
+)
+
+insert into улица(yName) values ('Шаранговича')
+insert into улица(yName) values ('Брылевича')
+insert into улица(yName) values ('Немига')
+insert into улица(yName) values ('Люксембург')
+insert into улица(yName) values ('Центральная')
+
+update улица set yName = 'Маршала Лосика' where yName = 'Немига'
+update улица set yName = 'Рафиева' where yName = 'Брылевича'
+
+delete from улица where yName ='Маршала Лосика'
+delete from улица where yName ='Центральная'
+
+
+
+create table автомобиль 
+(
+Vin bigint not null identity(23652736457236,5),
+acost int not null default 1000,
+dveri int not null default 4,
+mesta int not null default 5,
+IDM int not null,
+constraint CS_PK3 primary key(Vin),
+constraint CS_FK foreign key(IDM) references  марка(IDM) on delete cascade on update cascade,
+constraint CS_Check check (mesta>=2 and mesta<=10)
+)
+insert into автомобиль(acost,dveri,mesta,IDM) values (300,4,5,2)
+insert into автомобиль(acost,dveri,mesta,IDM) values (230,2,2,1)
+insert into автомобиль(acost,dveri,mesta,IDM) values (1005,4,5,3)
+insert into автомобиль(acost,dveri,mesta,IDM) values (560,2,3,5)
+insert into автомобиль(acost,dveri,mesta,IDM) values (670,4,6,4)
+
+update автомобиль set acost = 450 where acost = 300
+update автомобиль set acost = 467 where acost = 1005
+
+delete from автомобиль where acost = 230
+delete from автомобиль where acost = 560
+
+
+
+create table клиент
+(
+idkl int not null identity,
+FIO varchar(50) not null,
+number_of_house int not null,
+number_of_flat int not null,
+DateOfBirth date not null default '2001-02-05',
+klAge int not null default 18,
+PhoneNumber bigint null,
+IDY int not null,
+constraint CS_PK5 primary key (idkl),
+constraint CS_FK1 foreign key(IDY) references улица(IDY) on delete cascade on update cascade,
+constraint CS_Unique unique (FIO)
+)
+
+insert into клиент(FIO,number_of_house,number_of_flat,DateOfBirth,klAge,PhoneNumber,IDY) values ('Б.А.Р.',4,106,'2001-05-02',18,375296928455,1)
+insert into клиент(FIO,number_of_house,number_of_flat,DateOfBirth,klAge,PhoneNumber,IDY) values ('Х.Н.А.',16,15,'2002-08-22',17,375294458455,3)
+insert into клиент(FIO,number_of_house,number_of_flat,DateOfBirth,klAge,PhoneNumber,IDY) values ('Р.Х.Б.',12,176,'2001-12-04',18,375296987634,4)
+insert into клиент(FIO,number_of_house,number_of_flat,DateOfBirth,klAge,PhoneNumber,IDY) values ('Г.Р.К.',14,17,'2002-10-27',17,375295643455,2)
+insert into клиент(FIO,number_of_house,number_of_flat,DateOfBirth,klAge,PhoneNumber,IDY) values ('Т.П.Р.',15,1,'2001-12-26',18,375296978634,5)
+
+update клиент set number_of_house = 16 where number_of_house = 4
+update клиент set number_of_house = 46 where number_of_house = 12
+
+delete from клиент where number_of_flat = 106
+delete from клиент where number_of_flat = 176
+
+
+
+create table заказ
+(
+IDZ int not null identity,
+zOplata bit not null,
+DateVidach date not null default '2019-10-15',
+DateBack date not null default '2020-03-26' ,
+srok int not null,
+zcost int not null default 1000,
+Vin bigint not null,
+idkl int not null,
+constraint CS_PK4 primary key(IDZ),
+constraint CS_FK2 foreign key(Vin) references автомобиль(Vin) on delete cascade on update cascade,
+constraint CS_FK3 foreign key(idkl) references клиент(idkl)on delete cascade on update cascade
+)
+insert into заказ (zOplata,DateVidach,DateBack,srok,zcost,Vin,idkl) values ('true','2019-10-15','2020-03-05',109,506,23652736457236,1)
+insert into заказ (zOplata,DateVidach,DateBack,srok,zcost,Vin,idkl) values ('false','2019-12-10','2020-01-14',76,405,23652736457241,2)
+insert into заказ (zOplata,DateVidach,DateBack,srok,zcost,Vin,idkl) values ('true','2019-06-05','2020-02-10',45,345,23652736457246,4)
+insert into заказ (zOplata,DateVidach,DateBack,srok,zcost,Vin,idkl) values ('false','2019-10-27','2020-01-12',876,506,23652736457251,3)
+insert into заказ (zOplata,DateVidach,DateBack,srok,zcost,Vin,idkl) values ('true','2019-10-15','2020-01-15',456,506,23652736457256,5)
+
+update заказ set srok = 567 where srok = 876
+update заказ set srok = 573 where srok = 456
+
+delete from заказ where zcost = 506
+delete from заказ where zcost = 345
